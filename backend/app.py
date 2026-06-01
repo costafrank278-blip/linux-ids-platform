@@ -1,6 +1,11 @@
 """Aplicação Flask principal"""
 
 import os
+import sys
+
+if __name__ == '__main__' and __package__ is None:
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from backend.config import config
@@ -17,21 +22,14 @@ def create_app(config_name='development'):
         static_url_path=''
     )
 
-    # Carregar configuração
     app.config.from_object(config[config_name])
-
-    # CORS
     CORS(app)
-
-    # Inicializar banco de dados
     init_database()
 
-    # Registrar blueprints (rotas)
     app.register_blueprint(alerts_bp, url_prefix='/api/alerts')
     app.register_blueprint(stats_bp, url_prefix='/api/stats')
     app.register_blueprint(logs_bp, url_prefix='/api/logs')
 
-    # Rotas base
     @app.route('/', methods=['GET'])
     def index():
         return app.send_static_file('index.html')
@@ -68,7 +66,6 @@ if __name__ == '__main__':
     env_name = os.environ.get('FLASK_ENV', 'development')
     app = create_app(env_name)
 
-    # Iniciar monitor de logs
     monitor = AuthMonitor(log_file=app.config.get('AUTH_LOG_FILE', '/var/log/auth.log'))
     monitor.start()
 

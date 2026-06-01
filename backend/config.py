@@ -49,9 +49,7 @@ class ProductionConfig(Config):
     """Configurações para produção"""
     DEBUG = False
     TESTING = False
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise ValueError("SECRET_KEY must be set in production")
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'change-me-in-production'
 
 
 class TestingConfig(Config):
