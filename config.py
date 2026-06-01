@@ -9,7 +9,7 @@ SETTINGS = {
     'HOST': os.environ.get('HOST', '0.0.0.0'),
     'PORT': int(os.environ.get('PORT', 5000)),
     'FLASK_ENV': os.environ.get('FLASK_ENV', 'development'),
-    'SECRET_KEY': os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production'),
+    'SECRET_KEY': os.environ.get('SECRET_KEY'),
     'DATABASE_PATH': os.environ.get('DATABASE_PATH', os.path.join(BACKEND_DIR, 'ids_platform.db')),
     'AUTH_LOG_FILE': os.environ.get('AUTH_LOG_FILE', '/var/log/auth.log'),
     'LOG_LEVEL': os.environ.get('LOG_LEVEL', 'INFO'),

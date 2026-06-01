@@ -19,11 +19,10 @@ class ThreatAnalyzer:
         self.brute_force_window = brute_force_window
         self.port_scan_threshold = port_scan_threshold
         self.port_scan_window = port_scan_window
-        self.failed_attempts = defaultdict(list)  # IP -> [timestamps]
-        self.port_scans = defaultdict(list)  # IP -> [(porta, timestamp)]
+        self.failed_attempts = defaultdict(list)
+        self.port_scans = defaultdict(list)
 
     def detect_brute_force(self, ip, failed=True):
-        """Detecta tentativas de força bruta"""
         if not failed:
             if ip in self.failed_attempts:
                 del self.failed_attempts[ip]
@@ -50,7 +49,6 @@ class ThreatAnalyzer:
         return None
 
     def detect_privilege_escalation(self, user, command):
-        """Detecta tentativas de escalação de privilégio"""
         sudo_pattern = r'^sudo\s+|su\s+-'
         suspicious_commands = ['passwd', 'visudo', 'chmod', 'chown', 'usermod']
 
@@ -68,12 +66,16 @@ class ThreatAnalyzer:
         return None
 
     def detect_port_scan(self, ip, port):
-        """Detecta varredura de portas (port scanning)"""
         if not ip or port is None:
             return None
 
+        try:
+            normalized_port = int(port)
+        except (TypeError, ValueError):
+            return None
+
         now = datetime.now()
-        self.port_scans[ip].append((int(port), now))
+        self.port_scans[ip].append((normalized_port, now))
 
         self.port_scans[ip] = [
             (p, ts) for p, ts in self.port_scans[ip]
@@ -95,7 +97,6 @@ class ThreatAnalyzer:
         return None
 
     def detect_unusual_access_time(self, user, current_time):
-        """Detecta acessos em horários incomuns"""
         hour = current_time.hour
 
         if hour < 6:
@@ -110,7 +111,6 @@ class ThreatAnalyzer:
         return None
 
     def analyze_failed_login(self, log_entry):
-        """Analisa entrada de log de login falhado"""
         alerts = []
 
         ip = log_entry.get('source_ip')
@@ -128,7 +128,6 @@ class ThreatAnalyzer:
         return alerts
 
     def analyze_successful_login(self, log_entry):
-        """Analisa entrada de log de login bem-sucedido"""
         alerts = []
 
         ip = log_entry.get('source_ip')
@@ -150,5 +149,4 @@ class ThreatAnalyzer:
         return alerts
 
 
-# Instância global
 threat_analyzer = ThreatAnalyzer()

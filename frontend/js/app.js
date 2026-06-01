@@ -1,5 +1,5 @@
 const API_BASE = '/api';
-const REFRESH_INTERVAL_MS = 5000;
+const REFRESH_INTERVAL_MS = window.DASHBOARD_REFRESH_INTERVAL_MS || 5000;
 
 let typeChart;
 let severityChart;

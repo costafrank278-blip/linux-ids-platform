@@ -1,6 +1,7 @@
 """Monitor de eventos de autenticação"""
 
 from datetime import datetime
+import os
 import threading
 import time
 
@@ -17,7 +18,7 @@ class AuthMonitor:
         self.log_reader = LogReader(log_file)
         self.running = False
         self.thread = None
-        env_name = __import__('os').environ.get('FLASK_ENV', 'development')
+        env_name = os.environ.get('FLASK_ENV', 'development')
         cfg = config.get(env_name, config['default'])
         self.poll_interval = cfg.MONITOR_POLL_INTERVAL
 

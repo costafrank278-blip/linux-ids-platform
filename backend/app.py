@@ -3,15 +3,23 @@
 import os
 import sys
 
-if __name__ == '__main__' and __package__ is None:
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+try:
+    from backend.config import config
+    from backend.database import init_database, get_db_connection
+    from backend.routes import alerts_bp, stats_bp, logs_bp
+    from logs_collector.auth_monitor import AuthMonitor
+except ModuleNotFoundError:
+    if __name__ == '__main__':
+        sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+        from backend.config import config
+        from backend.database import init_database, get_db_connection
+        from backend.routes import alerts_bp, stats_bp, logs_bp
+        from logs_collector.auth_monitor import AuthMonitor
+    else:
+        raise
 
 from flask import Flask, jsonify
 from flask_cors import CORS
-from backend.config import config
-from backend.database import init_database, get_db_connection
-from backend.routes import alerts_bp, stats_bp, logs_bp
-from logs_collector.auth_monitor import AuthMonitor
 
 
 def create_app(config_name='development'):
@@ -23,6 +31,9 @@ def create_app(config_name='development'):
     )
 
     app.config.from_object(config[config_name])
+    if config_name == 'production' and not app.config.get('SECRET_KEY'):
+        raise ValueError('SECRET_KEY must be set in production')
+
     CORS(app)
     init_database()
 
@@ -48,8 +59,8 @@ def create_app(config_name='development'):
             conn = get_db_connection()
             conn.close()
             return jsonify({'status': 'healthy', 'database': 'connected'})
-        except Exception as e:
-            return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
+        except Exception:
+            return jsonify({'status': 'unhealthy', 'error': 'database connection failed'}), 500
 
     @app.errorhandler(404)
     def not_found(error):

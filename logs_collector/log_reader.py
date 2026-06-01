@@ -54,9 +54,14 @@ class LogReader:
             return None
 
         timestamp_str, hostname, process, pid, message = match.groups()
+        current_year = datetime.now().year
+        try:
+            parsed_timestamp = datetime.strptime(f"{current_year} {timestamp_str}", "%Y %b %d %H:%M:%S")
+        except ValueError:
+            parsed_timestamp = datetime.now()
 
         return {
-            'timestamp': datetime.now(),
+            'timestamp': parsed_timestamp,
             'hostname': hostname,
             'process': process,
             'pid': pid,

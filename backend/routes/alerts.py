@@ -1,6 +1,6 @@
 """Endpoints para gerenciar alertas"""
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from backend.database import get_db_connection
 
 alerts_bp = Blueprint('alerts', __name__)
@@ -13,11 +13,15 @@ def get_alerts():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Filtros
         threat_type = request.args.get('threat_type')
         severity = request.args.get('severity')
         status = request.args.get('status')
+
+        max_limit = current_app.config.get('MAX_RESULTS', 1000)
         limit = int(request.args.get('limit', 100))
+        if limit < 1:
+            limit = 1
+        limit = min(limit, max_limit)
 
         query = 'SELECT * FROM alerts WHERE 1=1'
         params = []
@@ -47,6 +51,8 @@ def get_alerts():
             'total': len(alerts),
             'alerts': alerts
         })
+    except ValueError:
+        return jsonify({'error': 'Parâmetro limit inválido'}), 400
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -73,9 +79,11 @@ def get_alert(alert_id):
 def update_alert_status(alert_id):
     """Atualiza o status de um alerta"""
     try:
-        data = request.get_json(silent=True) or {}
-        new_status = data.get('status')
+        data = request.get_json()
+        if not isinstance(data, dict):
+            return jsonify({'error': 'JSON inválido'}), 400
 
+        new_status = data.get('status')
         if not new_status:
             return jsonify({'error': 'Status é obrigatório'}), 400
 
@@ -89,7 +97,6 @@ def update_alert_status(alert_id):
             return jsonify({'error': 'Alerta não encontrado'}), 404
 
         conn.close()
-
         return jsonify({'message': 'Status atualizado com sucesso'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
