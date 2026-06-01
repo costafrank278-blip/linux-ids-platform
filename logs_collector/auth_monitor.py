@@ -88,7 +88,7 @@ class AuthMonitor:
 
         if sudo_info['command']:
             escalation = threat_analyzer.detect_privilege_escalation(
-                sudo_info['user'] or 'unknown',
+                sudo_info['user'] if sudo_info['user'] is not None else 'unknown',
                 f"sudo {sudo_info['command']}"
             )
             if escalation:

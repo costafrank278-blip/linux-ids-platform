@@ -74,6 +74,9 @@ class ThreatAnalyzer:
         except (TypeError, ValueError):
             return None
 
+        if normalized_port < 1 or normalized_port > 65535:
+            return None
+
         now = datetime.now()
         self.port_scans[ip].append((normalized_port, now))
 

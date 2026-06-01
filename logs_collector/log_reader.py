@@ -107,7 +107,12 @@ class LogReader:
 
         port_match = re.search(r'port\s+(\d+)', message)
         if port_match:
-            result['source_port'] = int(port_match.group(1))
+            try:
+                port_value = int(port_match.group(1))
+                if 1 <= port_value <= 65535:
+                    result['source_port'] = port_value
+            except ValueError:
+                pass
 
         return result if result['type'] else None
 

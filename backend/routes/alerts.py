@@ -53,8 +53,8 @@ def get_alerts():
         })
     except ValueError:
         return jsonify({'error': 'Parâmetro limit inválido'}), 400
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception:
+        return jsonify({'error': 'Erro interno do servidor'}), 500
 
 
 @alerts_bp.route('/<int:alert_id>', methods=['GET'])
@@ -71,8 +71,8 @@ def get_alert(alert_id):
             return jsonify({'error': 'Alerta não encontrado'}), 404
 
         return jsonify(dict(row))
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception:
+        return jsonify({'error': 'Erro interno do servidor'}), 500
 
 
 @alerts_bp.route('/<int:alert_id>/status', methods=['PUT'])
@@ -98,8 +98,8 @@ def update_alert_status(alert_id):
 
         conn.close()
         return jsonify({'message': 'Status atualizado com sucesso'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception:
+        return jsonify({'error': 'Erro interno do servidor'}), 500
 
 
 @alerts_bp.route('/count', methods=['GET'])
@@ -128,5 +128,5 @@ def count_alerts():
             counts[threat_type][severity] = count
 
         return jsonify(counts)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception:
+        return jsonify({'error': 'Erro interno do servidor'}), 500
