@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux IDS Platform - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-dark bg-dark mb-4">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1">
+                    <i class="fas fa-shield-alt"></i> Linux IDS Platform
+                </span>
+                <span class="text-light">Status: <span id="status" class="badge bg-success">Online</span></span>
+            </div>
+        </nav>
+
+        <!-- Overview Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-left-primary">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-primary text-uppercase mb-1">Total Alertas</div>
+                                <div id="total-alerts" class="h3 mb-0">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-exclamation-triangle fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-left-danger">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-danger text-uppercase mb-1">Críticos</div>
+                                <div id="critical-alerts" class="h3 mb-0">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-exclamation-circle fa-2x text-danger"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-left-warning">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-warning text-uppercase mb-1">Últimas 24h</div>
+                                <div id="alerts-24h" class="h3 mb-0">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clock fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-left-info">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="text-info text-uppercase mb-1">IPs Únicos</div>
+                                <div id="unique-ips" class="h3 mb-0">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-globe fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Alertas por Tipo</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="alertsByTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Severidade dos Alertas</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="alertsBySeverityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top IPs -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Top 10 IPs com Mais Alertas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="top-ips-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Alertas Recentes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="alerts-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Tipo</th>
+                                        <th>Severidade</th>
+                                        <th>IP Origem</th>
+                                        <th>Descrição</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
